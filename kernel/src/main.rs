@@ -3,16 +3,17 @@
 
 use core::panic::PanicInfo;
 
-const VGA: *mut u8 = 0xb8000 as *mut u8;
-
-#[unsafe(no_mangle)]
+#[no_mangle]
 pub extern "C" fn kernel_main() -> ! {
-    unsafe {
-        *VGA.offset(0) = b'H';
-        *VGA.offset(1) = 0x0F;
+    let vga = 0xb8000 as *mut u8;
 
-        *VGA.offset(2) = b'i';
-        *VGA.offset(3) = 0x0F;
+    let msg = b"DogOS is alive";
+
+    for (i, &c) in msg.iter().enumerate() {
+        unsafe {
+            *vga.add(i * 2) = c;
+            *vga.add(i * 2 + 1) = 0x0f;
+        }
     }
 
     loop {}

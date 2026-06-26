@@ -1,20 +1,24 @@
 KERNEL_NAME := kernel
-TARGET := target.json
+
+TARGET := i686-dogos.json
+TARGET_NAME := i686-dogos
+
 PROFILE := debug
 
+CARGO := cargo +nightly
 ASM := nasm
-RUST := cargo
 LD := ld.lld
 
 BUILD := build
 ISO := $(BUILD)/iso
 
 BOOT_OBJ := $(BUILD)/boot.o
-KERNEL_BIN := target/$(TARGET)/$(PROFILE)/$(KERNEL_NAME)
 KERNEL_ELF := $(BUILD)/kernel.elf
-ISO_FILE := $(BUILD)/myos.iso
+ISO_FILE := $(BUILD)/DogOS.iso
 
-.PHONY: all run iso clean
+KERNEL_BIN := kernel/target/$(TARGET_NAME)/$(PROFILE)/$(KERNEL_NAME)
+
+.PHONY: all iso run clean
 
 all: iso
 
@@ -25,14 +29,19 @@ $(BOOT_OBJ): kernel/boot.asm | $(BUILD)
 	$(ASM) -f elf32 $< -o $@
 
 $(KERNEL_BIN):
-	$(RUST) build --target $(TARGET)
+	$(CARGO) build \
+		-Zbuild-std=core,compiler_builtins \
+		-Zbuild-std-features=compiler-builtins-mem \
+		-Zjson-target-spec \
+		--manifest-path kernel/Cargo.toml \
+		--target $(TARGET)
 
 $(KERNEL_ELF): $(BOOT_OBJ) $(KERNEL_BIN)
 	$(LD) \
 		-T kernel/linker.ld \
 		$(BOOT_OBJ) \
 		$(KERNEL_BIN) \
-		-o $@
+		-o $(KERNEL_ELF)
 
 iso: $(KERNEL_ELF)
 	rm -rf $(ISO)
@@ -48,5 +57,5 @@ run: iso
 		-cdrom $(ISO_FILE)
 
 clean:
-	cargo clean
+	$(CARGO) clean --manifest-path kernel/Cargo.toml
 	rm -rf $(BUILD)

@@ -13,7 +13,7 @@ boot.o: boot.asm | $(BUILD)
 	nasm -f elf32 boot.asm -o $(BUILD)/boot.o
 
 kernel:
-	cargo build --manifest-path kernel/Cargo.toml --release
+	cargo build --manifest-path kernel/Cargo.toml
 
 $(ELF): boot.o kernel
 	ld.lld -T linker.ld \

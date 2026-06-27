@@ -1,5 +1,9 @@
 use bootloader_api::info::{FrameBuffer, FrameBufferInfo, PixelFormat};
 use core::cmp::min;
+use noto_sans_mono_bitmap::{get_raster, get_raster_width, FontWeight, RasterHeight};
+
+const FONT_WEIGHT: FontWeight = FontWeight::Regular;
+const FONT_HEIGHT: RasterHeight = RasterHeight::Size16;
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub struct Color {
@@ -118,4 +122,42 @@ impl FramebufferWriter {
         self.draw_vline(x, y, height, color);
         self.draw_vline(x + width - 1, y, height, color);
     }
+
+    pub fn char_width(&self) -> usize {
+        get_raster_width(FONT_WEIGHT, FONT_HEIGHT)
+    }
+
+    pub fn get_width() -> usize {
+        FONT_WEIGHT.val()
+    }
+
+    pub fn draw_char(&mut self, x: usize, y: usize, c: char, fg: Color, bg: Color){
+        let glyph = get_raster(c, FONT_WEIGHT, FONT_HEIGHT).or_else(|| get_raster(' ', FONT_WEIGHT, FONT_HEIGHT)).expect("space glyph must always be rasterizable");
+
+        for (row, line) in glyph.raster().iter().enumerate() {
+            for (col, intensity) in line.iter().enumerate() {
+                let blended = Color::new(
+                    lerp_channel(bg.r, fg.r, *intensity),
+                    lerp_channel(bg.g, fg.g, *intensity),
+                    lerp_channel(bg.b, fg.b, *intensity)
+                );
+                self.set_pixel(x + col, y + row, blended);
+            }
+        }
+    }
+
+    pub fn draw_str(&mut self, x: usize, y: usize, text: &str, fg: Color, bg: Color) {
+        let advance = self.char_width();
+
+        for (i, c) in text.chars().enumerate() {
+            self.draw_char(x + i * advance, y, c, bg, fg);
+        }
+    }
+}
+
+fn lerp_channel(bg: u8, fg: u8, intensity: u8) -> u8 {
+    let bg = bg as i32;
+    let fg = fg as i32;
+    let intensity = intensity as i32;
+    (bg + (fg - bg) * intensity / 255) as u8
 }

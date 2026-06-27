@@ -150,7 +150,7 @@ impl FramebufferWriter {
         let advance = self.char_width();
 
         for (i, c) in text.chars().enumerate() {
-            self.draw_char(x + i * advance, y, c, bg, fg);
+            self.draw_char(x + i * advance, y, c, fg, bg);
         }
     }
 }

@@ -15,7 +15,8 @@ bootloader_api::entry_point!(kernel_main);
 
 fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
     let framebuffer = boot_info.framebuffer.as_mut().unwrap();
-    let writer = FramebufferWriter::new(framebuffer);
+    let mut writer = FramebufferWriter::new(framebuffer);
+    writer.draw_char(20, 20, 'Z', Color::WHITE, Color::BLACK);
     console::init(Console::new(writer));
 
     drivers::serial::init();

@@ -1,7 +1,7 @@
 use crate::drivers::framebuffer::{Color, FramebufferWriter};
 use core::fmt;
 
-pub struct Console{
+pub struct Console {
     writer: FramebufferWriter,
     fg: Color,
     bg: Color,
@@ -30,7 +30,7 @@ impl Console {
         console
     }
 
-    pub fn set_color(&mut self, fg: Color, bg: Color){
+    pub fn set_color(&mut self, fg: Color, bg: Color) {
         self.fg = fg;
         self.bg = bg;
     }
@@ -89,4 +89,20 @@ impl fmt::Write for Console {
 
         Ok(())
     }
+}
+
+pub static CONSOLE: spin::Mutex<Option<Console>> = spin::Mutex::new(None);
+
+pub fn init(console: Console) {
+    *CONSOLE.lock() = Some(console);
+}
+
+pub fn with<F: FnOnce(&mut Console)>(f: F) {
+    if let Some(console) = CONSOLE.lock().as_mut() {
+        f(console);
+    }
+}
+
+pub unsafe fn force_unlock() {
+    CONSOLE.force_unlock();
 }

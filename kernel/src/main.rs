@@ -3,6 +3,7 @@
 
 mod console;
 mod drivers;
+mod logger;
 
 use bootloader_api::BootInfo;
 use console::Console;
@@ -17,30 +18,31 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
     let writer = FramebufferWriter::new(framebuffer);
     console::init(Console::new(writer));
 
-    console::with(|console| {
-        console.set_color(Color::GREEN, Color::BLACK);
-        let _ = writeln!(console, "DogOS console online");
+    drivers::serial::init();
+    logger::init();
 
-        for i in 0..80 {
-            let _ = writeln!(console, "log line {}", i);
-        }
-    });
+    println!("DogOS console online");
+    println!("Tabs:\tone\ttwo\tthree");
+
+    log::info!("logger ready, this line goes to screen and serial");
+    log::warn!("this is a warning, shown in yellow");
+
+    console::with(|c| c.set_color(Color::WHITE, Color::BLACK));
+    for i in 0..40 {
+        println!("log line {}", i);
+    }
 
     loop {}
 }
-
 #[cfg(not(test))]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     unsafe {
         console::force_unlock();
+        drivers::serial::force_unlock();
     }
 
-    console::with(|console| {
-        console.set_color(Color::RED, Color::BLACK);
-        let _ = writeln!(console, "kernel panic:");
-        let _ = writeln!(console, "{}", info);
-    });
+    log::error!("kernel panic: {}", info);
 
     loop {}
 }

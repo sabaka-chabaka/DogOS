@@ -69,6 +69,17 @@ impl Console {
             return;
         }
 
+        if c == '\t' {
+            const TAB_STOP: usize = 4;
+            let next_col = (self.col / TAB_STOP + 1) * TAB_STOP;
+
+            while self.col < next_col {
+                self.write_char(' ');
+            }
+
+            return;
+        }
+
         if self.col >= self.cols {
             self.newline();
         }
@@ -105,4 +116,25 @@ pub fn with<F: FnOnce(&mut Console)>(f: F) {
 
 pub unsafe fn force_unlock() {
     CONSOLE.force_unlock();
+}
+
+pub fn _print(args: fmt::Arguments) {
+    use core::fmt::Write;
+
+    with(|console| {
+        let _ = console.write_fmt(args);
+    });
+}
+
+#[macro_export]
+macro_rules! print {
+    ($($arg:tt)*) => {
+        $crate::console::_print(format_args!($($arg)*))
+    };
+}
+
+#[macro_export]
+macro_rules! println {
+    () => ($crate::print!("\n"));
+    ($($arg:tt)*) => ($crate::print!("{}\n", format_args!($($arg)*)));
 }

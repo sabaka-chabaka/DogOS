@@ -7,7 +7,6 @@ mod logger;
 
 use bootloader_api::BootInfo;
 use console::Console;
-use core::fmt::Write;
 use core::panic::PanicInfo;
 use drivers::framebuffer::{Color, FramebufferWriter};
 
@@ -15,8 +14,7 @@ bootloader_api::entry_point!(kernel_main);
 
 fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
     let framebuffer = boot_info.framebuffer.as_mut().unwrap();
-    let mut writer = FramebufferWriter::new(framebuffer);
-    writer.draw_char(20, 20, 'Z', Color::WHITE, Color::BLACK);
+    let writer = FramebufferWriter::new(framebuffer);
     console::init(Console::new(writer));
 
     drivers::serial::init();

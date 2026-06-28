@@ -127,6 +127,10 @@ impl FramebufferWriter {
         get_raster_width(FONT_WEIGHT, FONT_HEIGHT)
     }
 
+    pub fn char_height(&self) -> usize {
+        FONT_HEIGHT.val()
+    }
+
     pub fn get_width() -> usize {
         FONT_WEIGHT.val()
     }

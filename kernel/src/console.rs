@@ -14,7 +14,7 @@ pub struct Console {
 impl Console {
     pub fn new(writer: FramebufferWriter) -> Self {
         let cols = writer.width() / writer.char_width();
-        let rows = writer.height() / writer.height();
+        let rows = writer.height() / writer.char_height();
 
         let mut console = Console {
             writer,
@@ -46,7 +46,7 @@ impl Console {
     }
 
     fn clear_row(&mut self, row: usize) {
-        let char_height = self.writer.height();
+        let char_height = self.writer.char_height();
         let y = row * char_height;
         let width = self.writer.width();
         self.writer.fill_rect(0, y, width, char_height, self.bg);
@@ -85,7 +85,7 @@ impl Console {
         }
 
         let x = self.col * self.writer.char_width();
-        let y = self.row * self.writer.height();
+        let y = self.row * self.writer.char_height();
         self.writer.draw_char(x, y, c, self.fg, self.bg);
 
         self.col += 1;

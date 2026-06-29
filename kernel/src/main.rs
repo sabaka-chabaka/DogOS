@@ -22,14 +22,10 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
     logger::init();
     cpu::gdt::init();
 
-    println!("DogOS console online");
-
     log::info!("logger ready, this line goes to screen and serial");
-    log::info!("GDT loaded");
-    log::warn!("this is a warning, shown in yellow");
 
     console::with(|c| c.set_color(Color::WHITE, Color::BLACK));
-    for i in 0..40 {
+    for i in 1..41 {
         println!("log line {}", i);
     }
 

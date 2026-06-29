@@ -2,6 +2,7 @@
 #![no_main]
 
 mod console;
+mod cpu;
 mod drivers;
 mod logger;
 
@@ -19,11 +20,12 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
 
     drivers::serial::init();
     logger::init();
+    cpu::gdt::init();
 
     println!("DogOS console online");
-    println!("Tabs:\tone\ttwo\tthree");
 
     log::info!("logger ready, this line goes to screen and serial");
+    log::info!("GDT loaded");
     log::warn!("this is a warning, shown in yellow");
 
     console::with(|c| c.set_color(Color::WHITE, Color::BLACK));
@@ -33,6 +35,7 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
 
     loop {}
 }
+
 #[cfg(not(test))]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {

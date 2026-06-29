@@ -1,6 +1,6 @@
 use crate::cpu::tss::TSS;
 use x86_64::instructions::tables::load_tss;
-use x86_64::registers::segmentation::{Segment, CS};
+use x86_64::registers::segmentation::{Segment, CS, SS};
 use x86_64::structures::gdt::{Descriptor, GlobalDescriptorTable, SegmentSelector};
 
 struct Selectors {
@@ -21,6 +21,7 @@ pub fn init() {
 
     unsafe {
         CS::set_reg(GDT.1.code_selector);
+        SS::set_reg(SegmentSelector::NULL);
         load_tss(GDT.1.tss_selector);
     }
 }

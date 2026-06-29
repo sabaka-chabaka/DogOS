@@ -21,10 +21,10 @@
 - [x] **12.** TSS с отдельным стеком для double fault
 - [x] **13.** IDT (Interrupt Descriptor Table), базовая структура
 - [x] **14.** Обработчик breakpoint exception (`#BP`) для отладки
-- [ ] **15.** Обработчик double fault (`#DF`) на отдельном стеке
-- [ ] **16.** Обработчик general protection fault (`#GP`)
-- [ ] **17.** Обработчик page fault (`#PF`) с выводом адреса и причины
-- [ ] **18.** Обработчик invalid opcode (`#UD`)
+- [x] **15.** Обработчик double fault (`#DF`) на отдельном стеке
+- [x] **16.** Обработчик general protection fault (`#GP`)
+- [x] **17.** Обработчик page fault (`#PF`) с выводом адреса и причины
+- [x] **18.** Обработчик invalid opcode (`#UD`)
 - [ ] **19.** Ремап PIC (8259) на свободные векторы прерываний
 - [ ] **20.** Включение прерываний (`sti`) и базовый диспетчер IRQ
 - [ ] **21.** Переход на APIC (Local APIC + IOAPIC) вместо PIC

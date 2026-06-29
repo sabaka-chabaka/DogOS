@@ -20,7 +20,7 @@
 - [x] **11.** GDT (Global Descriptor Table) через крейт `x86_64`
 - [x] **12.** TSS с отдельным стеком для double fault
 - [x] **13.** IDT (Interrupt Descriptor Table), базовая структура
-- [ ] **14.** Обработчик breakpoint exception (`#BP`) для отладки
+- [x] **14.** Обработчик breakpoint exception (`#BP`) для отладки
 - [ ] **15.** Обработчик double fault (`#DF`) на отдельном стеке
 - [ ] **16.** Обработчик general protection fault (`#GP`)
 - [ ] **17.** Обработчик page fault (`#PF`) с выводом адреса и причины

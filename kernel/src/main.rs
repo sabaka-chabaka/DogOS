@@ -21,6 +21,7 @@ fn kernel_main(boot_info: &'static mut BootInfo) -> ! {
     drivers::serial::init();
     logger::init();
     cpu::gdt::init();
+    cpu::idt::init();
 
     log::info!("logger ready, this line goes to screen and serial");
 
